@@ -34,12 +34,14 @@ function load_mailbox(mailbox) {
 }
 
 function send_email() {
+  // Get form data
   const recipients = document.querySelector('#compose-recipients').value
   const subject = document.querySelector('#compose-subject').value
   const body = document.querySelector('#compose-body').value
   console.log(recipients)
   console.log(subject)
   console.log(body)
+  // POST data to emails route
   fetch('/emails', {
     method: 'POST',
     body: JSON.stringify({
@@ -48,6 +50,7 @@ function send_email() {
       body: body
     })
   })
+  // Redirect to sent box or display error
   .then(response => response.json())
   .then(result => {
     if ("message" in result) {
