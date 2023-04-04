@@ -50,10 +50,14 @@ function send_email() {
   })
   .then(response => response.json())
   .then(result => {
+    if ("message" in result) {
+      load_mailbox('sent')
+    }
+    if ("error" in result) {
+      document.querySelector('#compose-error').innerHTML = result['error'];
+    }
     console.log(result);
   });
-
-  load_mailbox('sent')
 
   return false;
 }
