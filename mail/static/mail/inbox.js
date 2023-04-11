@@ -30,7 +30,20 @@ function load_mailbox(mailbox) {
   document.querySelector('#compose-view').style.display = 'none';
 
   // Show the mailbox name
-  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3><hr>`;
+
+  // Show mailbox content
+  const email_element = document.createElement('div');
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => {
+    email_element.innerHTML = `${JSON.stringify(emails[0])}<hr>`;
+  });
+  email_element.addEventListener('click', function() {
+    console.log('This element has been clicked!')
+  });
+  document.querySelector('#emails-view').append(email_element);
+
 }
 
 function send_email() {
