@@ -47,8 +47,9 @@ function load_mailbox(mailbox) {
       }
 
       email_element.addEventListener('click', function() {
-        console.log('This element has been clicked!')
         // TODO: Set email status to read and navigate to email
+        const email_id = email["id"];
+        load_email(email_id);
       });
       document.querySelector('#emails-view').append(email_element);
     });
@@ -61,9 +62,6 @@ function send_email() {
   const recipients = document.querySelector('#compose-recipients').value
   const subject = document.querySelector('#compose-subject').value
   const body = document.querySelector('#compose-body').value
-  console.log(recipients)
-  console.log(subject)
-  console.log(body)
   // POST data to emails route
   fetch('/emails', {
     method: 'POST',
@@ -82,8 +80,22 @@ function send_email() {
     if ("error" in result) {
       document.querySelector('#compose-error').innerHTML = result['error'];
     }
-    console.log(result);
   });
 
   return false;
+}
+
+function load_email(email_id) {
+  // TODO: Load email
+  fetch(`/emails/${email_id}`)
+  .then(response => response.json())
+  .then(email => {
+    console.log(email);
+    const sender = email["sender"];
+    const recipients = email["recipients"];
+    const subject = email["subject"];
+    const timestamp = email["timestamp"];
+    const body = email["body"];
+    console.log(body);
+  });
 }
