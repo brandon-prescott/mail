@@ -15,6 +15,7 @@ function compose_email() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#email-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
@@ -27,6 +28,7 @@ function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
+  document.querySelector('#email-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
 
   // Show the mailbox name
@@ -47,7 +49,6 @@ function load_mailbox(mailbox) {
       }
 
       email_element.addEventListener('click', function() {
-        // TODO: Set email status to read and navigate to email
         const email_id = email["id"];
         load_email(email_id);
       });
@@ -58,6 +59,7 @@ function load_mailbox(mailbox) {
 }
 
 function send_email() {
+
   // Get form data
   const recipients = document.querySelector('#compose-recipients').value
   const subject = document.querySelector('#compose-subject').value
@@ -86,16 +88,25 @@ function send_email() {
 }
 
 function load_email(email_id) {
-  // TODO: Load email
+
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#email-view').style.display = 'block';
+  document.querySelector('#compose-view').style.display = 'none';
+
+  // Clear previous email content
+  document.querySelector('#email-view').innerHTML = '';
+
   fetch(`/emails/${email_id}`)
   .then(response => response.json())
   .then(email => {
-    console.log(email);
-    const sender = email["sender"];
-    const recipients = email["recipients"];
-    const subject = email["subject"];
-    const timestamp = email["timestamp"];
-    const body = email["body"];
-    console.log(body);
+
+    const fields = ["sender", "recipients", "subject", "timestamp", "body"];
+
+    fields.forEach(field => {
+      const element = document.createElement('div');
+      element.innerHTML = `${field}: ${email[field]}<hr>`;
+      document.querySelector('#email-view').append(element);
+    })
   });
 }
