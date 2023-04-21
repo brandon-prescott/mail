@@ -96,7 +96,7 @@ function load_email(email_id) {
   // Clear previous email content and display archive button
   document.querySelector('#email-view').innerHTML = '';
 
-  // Load email content and set status to read
+  // Load email content
   fetch(`/emails/${email_id}`)
   .then(response => response.json())
   .then(email => {
@@ -121,6 +121,11 @@ function load_email(email_id) {
     }
     document.querySelector('#email-view').append(archive_element);
 
+    // Create reply button
+    const reply_element = document.createElement('div');
+    reply_element.innerHTML = '<button id="reply-button">Reply</button><hr>';
+    document.querySelector('#email-view').append(reply_element);
+
     // Change archive status on click and load inbox
     const archive_button = document.getElementById("archive-button");
     archive_button.addEventListener('click', function() {
@@ -133,6 +138,19 @@ function load_email(email_id) {
       load_mailbox('inbox');
       location.reload(); // refreshes page to ensure mailbox page content is up to date
     });
+
+    // Load composition form and pre-fill with information
+    const reply_button = document.getElementById("reply-button");
+    reply_button.addEventListener('click', function() {
+      const original_sender = email["sender"];
+      const original_subject = email["subject"];
+      const original_timestamp = email["timestamp"];
+      const original_body = email["body"];
+
+      reply(original_sender, original_subject, original_timestamp, original_body);
+
+    });
+
   });
 
   // Update read status
@@ -142,4 +160,24 @@ function load_email(email_id) {
       read: true
     })
   });
+}
+
+function reply(original_sender, original_subject, original_timestamp, original_body) {
+
+  // Prevents duplicate instances of 'Re:' in subject
+  let new_subject_prefix = '';
+  if (original_subject.split(' ',1)[0] != "Re:") {
+    new_subject_prefix = 'Re: ';
+  }
+
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#email-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+
+  // Clear out composition fields
+  document.querySelector('#compose-recipients').value = original_sender;
+  document.querySelector('#compose-subject').value = `${new_subject_prefix}${original_subject}`;
+  document.querySelector('#compose-body').value = `On ${original_timestamp} ${original_sender} wrote: ${original_body}`;
+
 }
