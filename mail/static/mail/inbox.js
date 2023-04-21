@@ -83,7 +83,6 @@ function send_email() {
       document.querySelector('#compose-error').innerHTML = result['error'];
     }
   });
-
   return false;
 }
 
@@ -97,6 +96,7 @@ function load_email(email_id) {
   // Clear previous email content
   document.querySelector('#email-view').innerHTML = '';
 
+  // Load email content and set status to read
   fetch(`/emails/${email_id}`)
   .then(response => response.json())
   .then(email => {
@@ -107,6 +107,13 @@ function load_email(email_id) {
       const element = document.createElement('div');
       element.innerHTML = `${field}: ${email[field]}<hr>`;
       document.querySelector('#email-view').append(element);
+    })
+  });
+
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      read: true
     })
   });
 }
