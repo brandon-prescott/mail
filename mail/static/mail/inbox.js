@@ -95,14 +95,6 @@ function load_email(email_id) {
 
   // Clear previous email content and display archive button
   document.querySelector('#email-view').innerHTML = '';
-  const archive_element = document.createElement('div');
-  archive_element.innerHTML = '<button id="archive-button">Archive</button><hr>';
-  document.querySelector('#email-view').append(archive_element);
-
-  const archive_button = document.getElementById("archive-button");
-  archive_button.addEventListener('click', function() {
-    console.log("Button clicked!");
-  });
 
   // Load email content and set status to read
   fetch(`/emails/${email_id}`)
@@ -116,8 +108,34 @@ function load_email(email_id) {
       element.innerHTML = `${field}: ${email[field]}<hr>`;
       document.querySelector('#email-view').append(element);
     })
+
+    // Create archive/unarchive button
+    const archive_element = document.createElement('div');
+    let archive_action = true;
+    if (email["archived"] == false) {
+      archive_element.innerHTML = '<button id="archive-button">Archive</button><hr>';
+      archive_action = true;
+    } else {
+      archive_element.innerHTML = '<button id="archive-button">Unarchive</button><hr>';
+      archive_action = false;
+    }
+    document.querySelector('#email-view').append(archive_element);
+
+    // Change archive status on click and load inbox
+    const archive_button = document.getElementById("archive-button");
+    archive_button.addEventListener('click', function() {
+      fetch(`/emails/${email_id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          archived: archive_action
+        })
+      });
+      load_mailbox('inbox');
+      location.reload(); // refreshes page to ensure mailbox page content is up to date
+    });
   });
 
+  // Update read status
   fetch(`/emails/${email_id}`, {
     method: 'PUT',
     body: JSON.stringify({
