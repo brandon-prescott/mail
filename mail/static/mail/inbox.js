@@ -39,8 +39,16 @@ function load_mailbox(mailbox) {
     emails.forEach(email => {
       const email_element = document.createElement('div');
       email_element.innerHTML = `${JSON.stringify(email)}<hr>`;
+
+      if (email["read"] == true) {
+        email_element.style.backgroundColor = 'whitesmoke';
+      } else {
+        email_element.style.backgroundColor = 'white';
+      }
+
       email_element.addEventListener('click', function() {
         console.log('This element has been clicked!')
+        // TODO: Set email status to read and navigate to email
       });
       document.querySelector('#emails-view').append(email_element);
     });
