@@ -93,8 +93,16 @@ function load_email(email_id) {
   document.querySelector('#email-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
 
-  // Clear previous email content
+  // Clear previous email content and display archive button
   document.querySelector('#email-view').innerHTML = '';
+  const archive_element = document.createElement('div');
+  archive_element.innerHTML = '<button id="archive-button">Archive</button><hr>';
+  document.querySelector('#email-view').append(archive_element);
+
+  const archive_button = document.getElementById("archive-button");
+  archive_button.addEventListener('click', function() {
+    console.log("Button clicked!");
+  });
 
   // Load email content and set status to read
   fetch(`/emails/${email_id}`)
