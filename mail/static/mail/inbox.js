@@ -32,15 +32,37 @@ function load_mailbox(mailbox) {
   document.querySelector('#compose-view').style.display = 'none';
 
   // Show the mailbox name
-  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3><hr>`;
+  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
   // Show mailbox content
   fetch(`/emails/${mailbox}`)
   .then(response => response.json())
   .then(emails => {
     emails.forEach(email => {
+      // Create div for each email
       const email_element = document.createElement('div');
-      email_element.innerHTML = `${JSON.stringify(email)}<hr>`;
+      email_element.classList.add('email-panel');
+
+      // Create separate span element for each email detail
+      const sender = email["sender"];
+      const sender_span = document.createElement('span');
+      sender_span.innerHTML = sender;
+      sender_span.classList.add('sender-span');
+
+      const subject = email["subject"];
+      const subject_span = document.createElement('span');
+      subject_span.innerHTML = subject;
+      subject_span.classList.add('subject-span');
+
+      const timestamp = email["timestamp"];
+      const timestamp_span = document.createElement('span');
+      timestamp_span.innerHTML = timestamp;
+      timestamp_span.classList.add('timestamp-span');
+
+      // Append the three span elements to the email element
+      email_element.appendChild(sender_span);
+      email_element.appendChild(subject_span);
+      email_element.appendChild(timestamp_span);
 
       if (email["read"] == true) {
         email_element.style.backgroundColor = 'whitesmoke';
@@ -105,26 +127,32 @@ function load_email(email_id) {
 
     fields.forEach(field => {
       const element = document.createElement('div');
-      element.innerHTML = `${field}: ${email[field]}<hr>`;
+      if (field == "body") {
+        element.innerHTML = `<hr><span style="word-wrap: break-word">${email[field]}</span><hr>`;
+      } else {
+        element.innerHTML = `<strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> ${email[field]}`;
+      }
       document.querySelector('#email-view').append(element);
     })
+
+    // Create reply button
+    const reply_element = document.createElement('div');
+    reply_element.innerHTML = '<button class= "btn btn-outline-success btn-sm" id="reply-button">Reply</button>';
+    reply_element.classList.add('reply-btn');
+    document.querySelector('#email-view').append(reply_element);
 
     // Create archive/unarchive button
     const archive_element = document.createElement('div');
     let archive_action = true;
     if (email["archived"] == false) {
-      archive_element.innerHTML = '<button id="archive-button">Archive</button><hr>';
+      archive_element.innerHTML = '<button class= "btn btn-outline-secondary btn-sm" id="archive-button">Archive</button>';
+      archive_element.classList.add('archive-btn');
       archive_action = true;
     } else {
-      archive_element.innerHTML = '<button id="archive-button">Unarchive</button><hr>';
+      archive_element.innerHTML = '<button id="archive-button">Unarchive</button>';
       archive_action = false;
     }
     document.querySelector('#email-view').append(archive_element);
-
-    // Create reply button
-    const reply_element = document.createElement('div');
-    reply_element.innerHTML = '<button id="reply-button">Reply</button><hr>';
-    document.querySelector('#email-view').append(reply_element);
 
     // Change archive status on click and load inbox
     const archive_button = document.getElementById("archive-button");
