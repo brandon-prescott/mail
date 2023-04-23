@@ -149,7 +149,8 @@ function load_email(email_id) {
       archive_element.classList.add('archive-btn');
       archive_action = true;
     } else {
-      archive_element.innerHTML = '<button id="archive-button">Unarchive</button>';
+      archive_element.innerHTML = '<button class= "btn btn-outline-secondary btn-sm" id="archive-button">Unarchive</button>';
+      archive_element.classList.add('archive-btn');
       archive_action = false;
     }
     document.querySelector('#email-view').append(archive_element);
