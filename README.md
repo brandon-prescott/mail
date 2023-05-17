@@ -12,7 +12,7 @@ Design a front-end for an email client that makes API calls to send and receive 
    
 ## Preview
 
-https://github.com/brandon-prescott/commerce/assets/108699186/b729aa7a-d21d-4724-a18e-0f57f74b70c5
+https://github.com/brandon-prescott/mail/assets/108699186/bfc9df16-07e4-4a27-9de0-aa48822049ca
 
 ## Installation
 
